@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:signinfirebaseapp/pages/widgets/login_form.dart';
 import 'package:signinfirebaseapp/pages/widgets/welcome.dart';
 
 class LoginPage extends StatefulWidget {
@@ -24,8 +25,10 @@ class _LoginPageState extends State<LoginPage> {
         width: double.infinity,
         height: double.infinity,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             WelcomeWidget(),
+            LoginFormWidget(),
           ],
         ),
       ),
