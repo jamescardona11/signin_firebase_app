@@ -1,12 +1,22 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:signinfirebaseapp/libs/auth.dart';
+import 'package:signinfirebaseapp/pages/home/home_page.dart';
 import 'package:signinfirebaseapp/utils/responsive.dart';
 import 'package:signinfirebaseapp/widgets/circle_button.dart';
 import 'package:signinfirebaseapp/widgets/rounded_button.dart';
 
 class LoginFormWidget extends StatelessWidget {
+  void _goTo(BuildContext context, FirebaseUser user) {
+    if (user != null) {
+      Navigator.pushReplacementNamed(context, HomePage.id);
+    } else {
+      print('Login Failed');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = new Responsive.of(context);
@@ -52,7 +62,8 @@ class LoginFormWidget extends StatelessWidget {
                   backgroundColor: Color(0xff448AFF),
                   iconPath: 'assets/icons/facebook.svg',
                   onPressed: () async {
-                    await Auth.instance.facebook();
+                    final user = await Auth.instance.facebook();
+                    _goTo(context, user);
                   },
                 ),
                 SizedBox(width: 10),
@@ -60,7 +71,8 @@ class LoginFormWidget extends StatelessWidget {
                   backgroundColor: Color(0xffFF1744),
                   iconPath: 'assets/icons/google.svg',
                   onPressed: () async {
-                    await Auth.instance.google();
+                    final user = await Auth.instance.google();
+                    _goTo(context, user);
                   },
                 ),
               ],
