@@ -7,28 +7,34 @@ class CircleButtonWidget extends StatelessWidget {
   final double size;
   final Color backgroundColor;
   final String iconPath;
+  final VoidCallback onPressed;
 
   const CircleButtonWidget({
     Key key,
     this.size = 55,
     this.backgroundColor = AppColors.primary,
     this.iconPath,
+    @required this.onPressed,
   })  : assert(iconPath != null),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      padding: EdgeInsets.all(15),
-      child: SvgPicture.asset(
-        iconPath,
-        color: Colors.white,
-      ),
-      decoration: BoxDecoration(
-        color: this.backgroundColor,
-        shape: BoxShape.circle,
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      onPressed: this.onPressed,
+      child: Container(
+        width: size,
+        height: size,
+        padding: EdgeInsets.all(15),
+        child: SvgPicture.asset(
+          iconPath,
+          color: Colors.white,
+        ),
+        decoration: BoxDecoration(
+          color: this.backgroundColor,
+          shape: BoxShape.circle,
+        ),
       ),
     );
   }
