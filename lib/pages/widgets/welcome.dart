@@ -38,7 +38,11 @@ class WelcomeWidget extends StatelessWidget {
                       SizedBox(height: 20),
                       Text(
                         'Welcome Back!',
-                        style: TextStyle(fontSize: responsive.inchPercent(2.5), fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: responsive.inchPercent(2.5),
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'raleway',
+                        ),
                       ),
                     ],
                   ),
