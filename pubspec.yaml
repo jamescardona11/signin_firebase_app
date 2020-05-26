@@ -27,8 +27,8 @@ dependencies:
   after_layout: ^1.0.7+2
   firebase_core: ^0.4.5
   firebase_auth: ^0.16.1
-
-
+  google_sign_in: ^4.5.1
+  flutter_facebook_auth: ^0.2.3
 
 
 dev_dependencies:
