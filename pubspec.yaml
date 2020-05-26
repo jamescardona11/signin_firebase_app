@@ -25,6 +25,10 @@ dependencies:
     sdk: flutter
   flutter_svg: ^0.17.4
   after_layout: ^1.0.7+2
+  firebase_core: ^0.4.5
+  firebase_auth: ^0.16.1
+
+
 
 
 dev_dependencies:
