@@ -9,6 +9,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Sign in App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        fontFamily: 'sans',
+      ),
       home: LoginPage(),
     );
   }
