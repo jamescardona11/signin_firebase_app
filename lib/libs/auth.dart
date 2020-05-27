@@ -4,6 +4,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:signinfirebaseapp/pages/login/login_page.dart';
+import 'package:signinfirebaseapp/utils/dialogs.dart';
 
 class Auth {
   Auth._internal();
@@ -16,8 +17,10 @@ class Auth {
     return await _firebaseAuth.currentUser();
   }
 
-  Future<FirebaseUser> google() async {
+  Future<FirebaseUser> google(BuildContext context) async {
     try {
+      ProgressDialog progressDialog = ProgressDialog(context);
+      progressDialog.show();
       final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
@@ -30,6 +33,7 @@ class Auth {
 
       print('username: ${user.displayName}');
 
+      progressDialog.dismiss();
       return user;
     } catch (e) {
       print(e);
@@ -38,8 +42,10 @@ class Auth {
     }
   }
 
-  Future<FirebaseUser> facebook() async {
+  Future<FirebaseUser> facebook(BuildContext context) async {
     try {
+      ProgressDialog progressDialog = ProgressDialog(context);
+      progressDialog.showCupertino();
       final LoginResult facebookAuth = await FacebookAuth.instance.login();
 
       if (facebookAuth.status == 200) {
@@ -58,6 +64,7 @@ class Auth {
         print('Facebook Login failed');
       }
 
+      progressDialog.dismiss();
       return null;
     } catch (e) {
       print(e);
