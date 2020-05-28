@@ -13,8 +13,9 @@ import 'package:signinfirebaseapp/widgets/rounded_button.dart';
 class LoginFormWidget extends StatefulWidget {
   final VoidCallback onGotoRegister;
   final VoidCallback onGotoForgot;
+  final Alignment alignment;
 
-  const LoginFormWidget({Key key, this.onGotoRegister, this.onGotoForgot}) : super(key: key);
+  const LoginFormWidget({Key key, this.onGotoRegister, this.onGotoForgot, this.alignment}) : super(key: key);
 
   @override
   _LoginFormWidgetState createState() => _LoginFormWidgetState();
@@ -29,7 +30,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
     final Responsive responsive = new Responsive.of(context);
 
     return Align(
-      alignment: Alignment.bottomCenter,
+      alignment: widget.alignment != null ? widget.alignment : Alignment.bottomCenter,
       child: SafeArea(
         top: false,
         child: Container(
