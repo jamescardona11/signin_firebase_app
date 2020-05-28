@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
@@ -18,8 +19,8 @@ class Auth {
   }
 
   Future<FirebaseUser> google(BuildContext context) async {
+    ProgressDialog progressDialog = ProgressDialog(context);
     try {
-      ProgressDialog progressDialog = ProgressDialog(context);
       progressDialog.show();
       final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
@@ -43,8 +44,8 @@ class Auth {
   }
 
   Future<FirebaseUser> facebook(BuildContext context) async {
+    ProgressDialog progressDialog = ProgressDialog(context);
     try {
-      ProgressDialog progressDialog = ProgressDialog(context);
       progressDialog.showCupertino();
       final LoginResult facebookAuth = await FacebookAuth.instance.login();
 
@@ -69,6 +70,41 @@ class Auth {
     } catch (e) {
       print(e);
       return null;
+    }
+  }
+
+  Future<FirebaseUser> signUp(BuildContext context, String username, String email, String password) async {
+    ProgressDialog progressDialog = ProgressDialog(context);
+    try {
+      progressDialog.show();
+
+      final AuthResult result = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
+
+      if (result.user != null) {
+        final UserUpdateInfo userUpdateInfo = UserUpdateInfo();
+        userUpdateInfo.displayName = username;
+        await result.user.updateProfile(userUpdateInfo);
+        progressDialog.dismiss();
+        return user;
+      }
+
+      return null;
+    } catch (e) {
+      print(e);
+
+      return null;
+    }
+  }
+
+  Future<bool> sendResetEmailLink(BuildContext context, String email) async {
+    ProgressDialog progressDialog = ProgressDialog(context);
+    try {
+      progressDialog.show();
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
     }
   }
 
