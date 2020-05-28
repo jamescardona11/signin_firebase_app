@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'sans',
       ),
-      home: HomePage(),
+      home: LoginPage(),
       routes: {
         HomePage.id: (_) => HomePage(),
         LoginPage.id: (_) => LoginPage(),

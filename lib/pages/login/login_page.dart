@@ -1,8 +1,9 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:signinfirebaseapp/pages/widgets/login_form.dart';
-import 'package:signinfirebaseapp/pages/widgets/welcome.dart';
+import 'package:signinfirebaseapp/pages/login/widgets/login_form.dart';
+import 'package:signinfirebaseapp/pages/login/widgets/register_form.dart';
+import 'package:signinfirebaseapp/pages/login/widgets/welcome.dart';
 import 'package:signinfirebaseapp/utils/responsive.dart';
 
 class LoginPage extends StatefulWidget {
@@ -52,7 +53,13 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           WelcomeWidget(),
-                          LoginFormWidget(),
+                          Expanded(
+                              child: PageView(
+                            children: <Widget>[
+                              LoginFormWidget(),
+                              RegisterFormWidget(),
+                            ],
+                          )),
                         ],
                       ),
                     ),
