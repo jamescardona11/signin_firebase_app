@@ -10,8 +10,9 @@ import 'package:signinfirebaseapp/widgets/rounded_button.dart';
 
 class LoginFormWidget extends StatelessWidget {
   final VoidCallback onGotoRegister;
+  final VoidCallback onGotoForgot;
 
-  const LoginFormWidget({Key key, this.onGotoRegister}) : super(key: key);
+  const LoginFormWidget({Key key, this.onGotoRegister, this.onGotoForgot}) : super(key: key);
 
   void _goTo(BuildContext context, FirebaseUser user) {
     if (user != null) {
@@ -50,7 +51,7 @@ class LoginFormWidget extends StatelessWidget {
                 child: CupertinoButton(
                   padding: EdgeInsets.symmetric(vertical: 15),
                   child: Text('Forgot password?', style: TextStyle(fontFamily: 'sans')),
-                  onPressed: () {},
+                  onPressed: onGotoForgot,
                 ),
               ),
               SizedBox(height: responsive.inchPercent(2)),
