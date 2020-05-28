@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:signinfirebaseapp/libs/auth.dart';
 import 'package:signinfirebaseapp/pages/login/widgets/login_form.dart';
 import 'package:signinfirebaseapp/utils/app_colors.dart';
+import 'package:signinfirebaseapp/utils/dialogs.dart';
 import 'package:signinfirebaseapp/utils/responsive.dart';
 import 'package:signinfirebaseapp/widgets/rounded_button.dart';
 
@@ -16,6 +16,9 @@ class ForgotFormWidget extends StatefulWidget {
 }
 
 class _ForgotFormWidgetState extends State<ForgotFormWidget> {
+  bool _send = false;
+  final GlobalKey<InputTextLoginState> emailKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = new Responsive.of(context);
@@ -38,10 +41,16 @@ class _ForgotFormWidgetState extends State<ForgotFormWidget> {
               ),
               SizedBox(height: responsive.inchPercent(1)),
               SizedBox(height: responsive.inchPercent(2)),
-              InputTextLogin(
-                iconPath: 'assets/icons/email.svg',
-                placeholder: 'Email address',
-              ),
+              (_send)
+                  ? Text('The email to reset your password is send')
+                  : InputTextLogin(
+                      key: emailKey,
+                      iconPath: 'assets/icons/email.svg',
+                      placeholder: 'Email address',
+                      validator: (text) {
+                        return text.trim().contains('@');
+                      },
+                    ),
               SizedBox(height: responsive.inchPercent(2)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -50,10 +59,12 @@ class _ForgotFormWidgetState extends State<ForgotFormWidget> {
                     onPressed: widget.onGotoLogin,
                     child: Text('← Back to Login', style: TextStyle()),
                   ),
-                  RoundedButtonWidget(
-                    label: 'Send',
-                    onPressed: () {},
-                  ),
+                  if (!_send) ...[
+                    RoundedButtonWidget(
+                      label: 'Send',
+                      onPressed: _submit,
+                    )
+                  ],
                 ],
               ),
               SizedBox(height: responsive.inchPercent(3.3)),
@@ -62,5 +73,20 @@ class _ForgotFormWidgetState extends State<ForgotFormWidget> {
         ),
       ),
     );
+  }
+
+  _submit() async {
+    final String email = emailKey.currentState.value.toString().trim();
+
+    final bool emailIsOk = emailKey.currentState.isOk;
+
+    if (emailIsOk) {
+      final finalIsOk = await Auth.instance.sendResetEmailLink(context, email);
+      setState(() {
+        _send = finalIsOk;
+      });
+    } else {
+      Dialogs.alert(context, description: 'Some fields are invalid');
+    }
   }
 }
