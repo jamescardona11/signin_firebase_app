@@ -9,6 +9,10 @@ import 'package:signinfirebaseapp/widgets/circle_button.dart';
 import 'package:signinfirebaseapp/widgets/rounded_button.dart';
 
 class LoginFormWidget extends StatelessWidget {
+  final VoidCallback onGotoRegister;
+
+  const LoginFormWidget({Key key, this.onGotoRegister}) : super(key: key);
+
   void _goTo(BuildContext context, FirebaseUser user) {
     if (user != null) {
       Navigator.pushReplacementNamed(context, HomePage.id);
@@ -90,7 +94,7 @@ class LoginFormWidget extends StatelessWidget {
                           fontFamily: 'sans',
                           fontWeight: FontWeight.w600,
                         )),
-                    onPressed: () {},
+                    onPressed: onGotoRegister,
                   )
                 ],
               ),

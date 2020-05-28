@@ -6,6 +6,12 @@ import 'package:signinfirebaseapp/pages/login/widgets/register_form.dart';
 import 'package:signinfirebaseapp/pages/login/widgets/welcome.dart';
 import 'package:signinfirebaseapp/utils/responsive.dart';
 
+class LoginFormType {
+  static final int login = 0;
+  static final int register = 1;
+  static final int forgotPassword = 2;
+}
+
 class LoginPage extends StatefulWidget {
   static final String id = 'login_page_route_id';
 
@@ -14,6 +20,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> with AfterLayoutMixin {
+  PageController _pageController = PageController(initialPage: LoginFormType.login);
+
   @override
   void initState() {
     super.initState();
@@ -54,12 +62,21 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin {
                         children: <Widget>[
                           WelcomeWidget(),
                           Expanded(
-                              child: PageView(
-                            children: <Widget>[
-                              LoginFormWidget(),
-                              RegisterFormWidget(),
-                            ],
-                          )),
+                            child: PageView(
+                              physics: NeverScrollableScrollPhysics(),
+                              controller: _pageController,
+                              children: <Widget>[
+                                LoginFormWidget(onGotoRegister: () {
+                                  _switchForm(LoginFormType.register);
+                                }),
+                                RegisterFormWidget(
+                                  onGotoLogin: () {
+                                    _switchForm(LoginFormType.login);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -82,7 +99,9 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin {
                           child: Container(
                             height: responsive.height,
                             child: Center(
-                              child: LoginFormWidget(),
+                              child: LoginFormWidget(onGotoRegister: () {
+                                _switchForm(LoginFormType.register);
+                              }),
                             ),
                           ),
                         ),
@@ -94,5 +113,15 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin {
             )),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _pageController.dispose();
+  }
+
+  void _switchForm(int page) {
+    _pageController.animateToPage(page, duration: Duration(milliseconds: 300), curve: Curves.linear);
   }
 }

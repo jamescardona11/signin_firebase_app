@@ -7,12 +7,16 @@ import 'package:signinfirebaseapp/utils/responsive.dart';
 import 'package:signinfirebaseapp/widgets/rounded_button.dart';
 
 class RegisterFormWidget extends StatefulWidget {
+  final VoidCallback onGotoLogin;
+
+  const RegisterFormWidget({Key key, this.onGotoLogin}) : super(key: key);
   @override
   _RegisterFormWidgetState createState() => _RegisterFormWidgetState();
 }
 
 class _RegisterFormWidgetState extends State<RegisterFormWidget> {
   bool _agree = false;
+
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = new Responsive.of(context);
@@ -99,7 +103,7 @@ class _RegisterFormWidgetState extends State<RegisterFormWidget> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   FlatButton(
-                    onPressed: () {},
+                    onPressed: widget.onGotoLogin,
                     child: Text('← Back to Login', style: TextStyle()),
                   ),
                   RoundedButtonWidget(
