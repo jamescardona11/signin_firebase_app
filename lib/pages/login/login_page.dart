@@ -1,5 +1,6 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:signinfirebaseapp/pages/login/widgets/forgot_form.dart';
 import 'package:signinfirebaseapp/pages/login/widgets/login_form.dart';
@@ -63,30 +64,7 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin {
                         children: <Widget>[
                           WelcomeWidget(),
                           Expanded(
-                            child: PageView(
-                              physics: NeverScrollableScrollPhysics(),
-                              controller: _pageController,
-                              children: <Widget>[
-                                LoginFormWidget(
-                                  onGotoRegister: () {
-                                    _switchForm(LoginFormType.register);
-                                  },
-                                  onGotoForgot: () {
-                                    _switchForm(LoginFormType.forgotPassword);
-                                  },
-                                ),
-                                RegisterFormWidget(
-                                  onGotoLogin: () {
-                                    _switchForm(LoginFormType.login);
-                                  },
-                                ),
-                                ForgotFormWidget(
-                                  onGotoLogin: () {
-                                    _switchForm(LoginFormType.login);
-                                  },
-                                ),
-                              ],
-                            ),
+                            child: _getForms(false),
                           ),
                         ],
                       ),
@@ -109,16 +87,7 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin {
                         child: SingleChildScrollView(
                           child: Container(
                             height: responsive.height,
-                            child: Center(
-                              child: LoginFormWidget(
-                                onGotoRegister: () {
-                                  _switchForm(LoginFormType.register);
-                                },
-                                onGotoForgot: () {
-                                  _switchForm(LoginFormType.forgotPassword);
-                                },
-                              ),
-                            ),
+                            child: _getForms(true),
                           ),
                         ),
                       ),
@@ -128,6 +97,35 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin {
               },
             )),
       ),
+    );
+  }
+
+  Widget _getForms(bool isLandscape) {
+    return PageView(
+      physics: NeverScrollableScrollPhysics(),
+      controller: _pageController,
+      children: <Widget>[
+        LoginFormWidget(
+          alignment: isLandscape ? Alignment.center : Alignment.bottomCenter,
+          onGotoRegister: () {
+            _switchForm(LoginFormType.register);
+          },
+          onGotoForgot: () {
+            _switchForm(LoginFormType.forgotPassword);
+          },
+        ),
+        RegisterFormWidget(
+          alignment: isLandscape ? Alignment.center : Alignment.bottomCenter,
+          onGotoLogin: () {
+            _switchForm(LoginFormType.login);
+          },
+        ),
+        ForgotFormWidget(
+          onGotoLogin: () {
+            _switchForm(LoginFormType.login);
+          },
+        ),
+      ],
     );
   }
 
