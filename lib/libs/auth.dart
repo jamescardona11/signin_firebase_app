@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
@@ -88,9 +89,19 @@ class Auth {
         return user;
       }
 
+      progressDialog.dismiss();
       return null;
-    } catch (e) {
+    } on PlatformException catch (e) {
+      String message = 'unknown error';
+      if (e.code == 'ERROR_EMAIL_ALREADY_IN_USER') {
+        message = e.message;
+      } else if (e.code == 'ERROR_WEAK_PASSWORD') {
+        message = e.message;
+      }
+
+      progressDialog.dismiss();
       print(e);
+      Dialogs.alert(context, title: 'ERROR', description: message);
 
       return null;
     }

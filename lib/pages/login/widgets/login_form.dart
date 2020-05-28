@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:signinfirebaseapp/libs/auth.dart';
 import 'package:signinfirebaseapp/pages/home/home_page.dart';
+import 'package:signinfirebaseapp/utils/app_colors.dart';
 import 'package:signinfirebaseapp/utils/responsive.dart';
 import 'package:signinfirebaseapp/widgets/circle_button.dart';
 import 'package:signinfirebaseapp/widgets/rounded_button.dart';
@@ -36,12 +37,12 @@ class LoginFormWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              _InputTextLogin(
+              InputTextLogin(
                 iconPath: 'assets/icons/email.svg',
                 placeholder: 'Email address',
               ),
               SizedBox(height: responsive.inchPercent(2)),
-              _InputTextLogin(
+              InputTextLogin(
                 iconPath: 'assets/icons/key.svg',
                 placeholder: 'Password',
               ),
@@ -107,29 +108,80 @@ class LoginFormWidget extends StatelessWidget {
   }
 }
 
-class _InputTextLogin extends StatelessWidget {
+class InputTextLogin extends StatefulWidget {
   final String placeholder;
   final String iconPath;
+  final String initValue;
+  final bool Function(String text) validator;
 
-  const _InputTextLogin({
+  const InputTextLogin({
+    Key key,
     @required this.iconPath,
     @required this.placeholder,
-  }) : assert(iconPath != null && placeholder != null);
+    this.validator,
+    this.initValue,
+  })  : assert(iconPath != null && placeholder != null),
+        super(key: key);
+  @override
+  InputTextLoginState createState() => InputTextLoginState();
+}
+
+class InputTextLoginState extends State<InputTextLogin> {
+  TextEditingController _controller;
+
+  bool get isOk => _validation;
+  String get value => _controller.text;
+
+  bool _validation = false;
+
+  void _checkValidation() {
+    if (widget.validator != null) {
+      final isOk = widget.validator(_controller.text);
+      if (_validation != isOk) {
+        _validation = isOk;
+        setState(() {});
+      }
+    } else {}
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = TextEditingController(text: widget.initValue);
+    _checkValidation();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return CupertinoTextField(
+      controller: _controller,
+      onChanged: (value) {
+        _checkValidation();
+      },
       padding: EdgeInsets.symmetric(vertical: 7, horizontal: 5),
       prefix: Container(
         padding: EdgeInsets.all(2),
         width: 40,
         height: 30,
         child: SvgPicture.asset(
-          this.iconPath,
+          this.widget.iconPath,
           color: Color(0xffCCCCCC),
         ),
       ),
-      placeholder: this.placeholder,
+      suffix: widget.validator != null
+          ? Icon(
+              Icons.check_circle,
+              color: _validation ? AppColors.primary : Colors.grey,
+            )
+          : null,
+      placeholder: this.widget.placeholder,
       placeholderStyle: TextStyle(fontFamily: 'sans', color: Color(0xffCCCCCC)),
       style: TextStyle(fontFamily: 'sans'),
       decoration: BoxDecoration(

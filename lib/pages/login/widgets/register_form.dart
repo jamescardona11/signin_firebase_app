@@ -1,8 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:signinfirebaseapp/libs/auth.dart';
+import 'package:signinfirebaseapp/pages/home/home_page.dart';
+import 'package:signinfirebaseapp/pages/login/widgets/login_form.dart';
 import 'package:signinfirebaseapp/utils/app_colors.dart';
+import 'package:signinfirebaseapp/utils/dialogs.dart';
 import 'package:signinfirebaseapp/utils/responsive.dart';
 import 'package:signinfirebaseapp/widgets/rounded_button.dart';
 
@@ -16,6 +20,9 @@ class RegisterFormWidget extends StatefulWidget {
 
 class _RegisterFormWidgetState extends State<RegisterFormWidget> {
   bool _agree = false;
+  final GlobalKey<InputTextLoginState> usernameKey = GlobalKey();
+  final GlobalKey<InputTextLoginState> emailKey = GlobalKey();
+  final GlobalKey<InputTextLoginState> passwordKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -45,19 +52,32 @@ class _RegisterFormWidgetState extends State<RegisterFormWidget> {
                 ),
               ),
               SizedBox(height: responsive.inchPercent(3)),
-              _InputTextLogin(
+              InputTextLogin(
+                key: usernameKey,
                 iconPath: 'assets/icons/avatar-user.svg',
                 placeholder: 'Username',
+                validator: (text) {
+                  print('VALIDATOR');
+                  return text.trim().length > 3;
+                },
               ),
               SizedBox(height: responsive.inchPercent(2)),
-              _InputTextLogin(
+              InputTextLogin(
+                key: emailKey,
                 iconPath: 'assets/icons/email.svg',
                 placeholder: 'Email address',
+                validator: (text) {
+                  return text.trim().contains('@');
+                },
               ),
               SizedBox(height: responsive.inchPercent(2)),
-              _InputTextLogin(
+              InputTextLogin(
+                key: passwordKey,
                 iconPath: 'assets/icons/key.svg',
                 placeholder: 'Password',
+                validator: (text) {
+                  return text.trim().length > 6;
+                },
               ),
               SizedBox(height: responsive.inchPercent(2)),
               DefaultTextStyle(
@@ -108,7 +128,7 @@ class _RegisterFormWidgetState extends State<RegisterFormWidget> {
                   ),
                   RoundedButtonWidget(
                     label: 'Sign up',
-                    onPressed: () {},
+                    onPressed: _submit,
                   ),
                 ],
               ),
@@ -119,38 +139,37 @@ class _RegisterFormWidgetState extends State<RegisterFormWidget> {
       ),
     );
   }
-}
 
-class _InputTextLogin extends StatelessWidget {
-  final String placeholder;
-  final String iconPath;
+  _submit() async {
+    final String username = usernameKey.currentState.value.toString().trim();
+    final String email = emailKey.currentState.value.toString().trim();
+    final String password = passwordKey.currentState.value.toString().trim();
 
-  const _InputTextLogin({
-    @required this.iconPath,
-    @required this.placeholder,
-  }) : assert(iconPath != null && placeholder != null);
+    final bool usernameIsOk = usernameKey.currentState.isOk;
+    final bool emailIsOk = emailKey.currentState.isOk;
+    final bool passwordIsOk = passwordKey.currentState.isOk;
 
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoTextField(
-      padding: EdgeInsets.symmetric(vertical: 7, horizontal: 5),
-      prefix: Container(
-        padding: EdgeInsets.all(2),
-        width: 40,
-        height: 30,
-        child: SvgPicture.asset(
-          this.iconPath,
-          color: Color(0xffCCCCCC),
-        ),
-      ),
-      placeholder: this.placeholder,
-      placeholderStyle: TextStyle(fontFamily: 'sans', color: Color(0xffCCCCCC)),
-      style: TextStyle(fontFamily: 'sans'),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(width: 1, color: Color(0xffDDDDDD)),
-        ),
-      ),
-    );
+    if (usernameIsOk && emailIsOk && passwordIsOk) {
+      if (_agree) {
+        final firebaseUser = await Auth.instance.signUp(context, username, email, password);
+        print(username);
+        print(email);
+        print(password);
+
+        _goTo(firebaseUser);
+      } else {
+        Dialogs.alert(context, description: 'You need to accept the terms and conditions');
+      }
+    } else {
+      Dialogs.alert(context, description: 'Some fields are invalid');
+    }
+  }
+
+  void _goTo(FirebaseUser user) {
+    if (user != null) {
+      Navigator.pushReplacementNamed(context, HomePage.id);
+    } else {
+      print('Register Failed');
+    }
   }
 }
