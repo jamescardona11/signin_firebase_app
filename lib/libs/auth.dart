@@ -135,9 +135,12 @@ class Auth {
     try {
       progressDialog.show();
       await _firebaseAuth.sendPasswordResetEmail(email: email);
+      progressDialog.dismiss();
       return true;
-    } catch (e) {
+    } on PlatformException catch (e) {
       print(e);
+      progressDialog.dismiss();
+      Dialogs.alert(context, title: 'ERROR', description: e.message);
       return false;
     }
   }
