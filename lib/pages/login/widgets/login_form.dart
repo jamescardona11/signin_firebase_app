@@ -5,23 +5,24 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:signinfirebaseapp/libs/auth.dart';
 import 'package:signinfirebaseapp/pages/home/home_page.dart';
 import 'package:signinfirebaseapp/utils/app_colors.dart';
+import 'package:signinfirebaseapp/utils/dialogs.dart';
 import 'package:signinfirebaseapp/utils/responsive.dart';
 import 'package:signinfirebaseapp/widgets/circle_button.dart';
 import 'package:signinfirebaseapp/widgets/rounded_button.dart';
 
-class LoginFormWidget extends StatelessWidget {
+class LoginFormWidget extends StatefulWidget {
   final VoidCallback onGotoRegister;
   final VoidCallback onGotoForgot;
 
   const LoginFormWidget({Key key, this.onGotoRegister, this.onGotoForgot}) : super(key: key);
 
-  void _goTo(BuildContext context, FirebaseUser user) {
-    if (user != null) {
-      Navigator.pushReplacementNamed(context, HomePage.id);
-    } else {
-      print('Login Failed');
-    }
-  }
+  @override
+  _LoginFormWidgetState createState() => _LoginFormWidgetState();
+}
+
+class _LoginFormWidgetState extends State<LoginFormWidget> {
+  final GlobalKey<InputTextLoginState> emailKey = GlobalKey();
+  final GlobalKey<InputTextLoginState> passwordKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +39,21 @@ class LoginFormWidget extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               InputTextLogin(
+                key: emailKey,
                 iconPath: 'assets/icons/email.svg',
                 placeholder: 'Email address',
+                validator: (text) {
+                  return text.trim().contains('@');
+                },
               ),
               SizedBox(height: responsive.inchPercent(2)),
               InputTextLogin(
+                key: passwordKey,
                 iconPath: 'assets/icons/key.svg',
                 placeholder: 'Password',
+                validator: (text) {
+                  return text.trim().length > 6;
+                },
               ),
               Container(
                 width: double.infinity,
@@ -52,13 +61,13 @@ class LoginFormWidget extends StatelessWidget {
                 child: CupertinoButton(
                   padding: EdgeInsets.symmetric(vertical: 15),
                   child: Text('Forgot password?', style: TextStyle(fontFamily: 'sans')),
-                  onPressed: onGotoForgot,
+                  onPressed: widget.onGotoForgot,
                 ),
               ),
               SizedBox(height: responsive.inchPercent(2)),
               RoundedButtonWidget(
                 label: 'Sign in',
-                onPressed: () {},
+                onPressed: _submit,
               ),
               SizedBox(height: responsive.inchPercent(3.3)),
               Text('Or continue with'),
@@ -96,7 +105,7 @@ class LoginFormWidget extends StatelessWidget {
                           fontFamily: 'sans',
                           fontWeight: FontWeight.w600,
                         )),
-                    onPressed: onGotoRegister,
+                    onPressed: widget.onGotoRegister,
                   )
                 ],
               ),
@@ -105,6 +114,30 @@ class LoginFormWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  _submit() async {
+    final String email = emailKey.currentState.value.toString().trim();
+    final String password = passwordKey.currentState.value.toString().trim();
+
+    final bool emailIsOk = emailKey.currentState.isOk;
+    final bool passwordIsOk = passwordKey.currentState.isOk;
+
+    if (emailIsOk && passwordIsOk) {
+      final firebaseUser = await Auth.instance.signIn(context, email, password);
+
+      _goTo(context, firebaseUser);
+    } else {
+      Dialogs.alert(context, description: 'Some fields are invalid');
+    }
+  }
+
+  void _goTo(BuildContext context, FirebaseUser user) {
+    if (user != null) {
+      Navigator.pushReplacementNamed(context, HomePage.id);
+    } else {
+      print('Login Failed');
+    }
   }
 }
 

@@ -74,6 +74,29 @@ class Auth {
     }
   }
 
+  Future<FirebaseUser> signIn(BuildContext context, String email, String password) async {
+    ProgressDialog progressDialog = ProgressDialog(context);
+    try {
+      progressDialog.show();
+      final AuthResult result = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+
+      if (result.user != null) {
+        progressDialog.dismiss();
+        return user;
+      }
+
+      progressDialog.dismiss();
+      return null;
+    } catch (e) {
+      String message = 'unknown error';
+      progressDialog.dismiss();
+      print(e);
+      Dialogs.alert(context, title: 'ERROR', description: message);
+
+      return null;
+    }
+  }
+
   Future<FirebaseUser> signUp(BuildContext context, String username, String email, String password) async {
     ProgressDialog progressDialog = ProgressDialog(context);
     try {
