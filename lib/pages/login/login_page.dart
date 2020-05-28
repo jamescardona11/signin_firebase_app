@@ -1,6 +1,7 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:signinfirebaseapp/pages/login/widgets/forgot_form.dart';
 import 'package:signinfirebaseapp/pages/login/widgets/login_form.dart';
 import 'package:signinfirebaseapp/pages/login/widgets/register_form.dart';
 import 'package:signinfirebaseapp/pages/login/widgets/welcome.dart';
@@ -66,10 +67,20 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin {
                               physics: NeverScrollableScrollPhysics(),
                               controller: _pageController,
                               children: <Widget>[
-                                LoginFormWidget(onGotoRegister: () {
-                                  _switchForm(LoginFormType.register);
-                                }),
+                                LoginFormWidget(
+                                  onGotoRegister: () {
+                                    _switchForm(LoginFormType.register);
+                                  },
+                                  onGotoForgot: () {
+                                    _switchForm(LoginFormType.forgotPassword);
+                                  },
+                                ),
                                 RegisterFormWidget(
+                                  onGotoLogin: () {
+                                    _switchForm(LoginFormType.login);
+                                  },
+                                ),
+                                ForgotFormWidget(
                                   onGotoLogin: () {
                                     _switchForm(LoginFormType.login);
                                   },
@@ -99,9 +110,14 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin {
                           child: Container(
                             height: responsive.height,
                             child: Center(
-                              child: LoginFormWidget(onGotoRegister: () {
-                                _switchForm(LoginFormType.register);
-                              }),
+                              child: LoginFormWidget(
+                                onGotoRegister: () {
+                                  _switchForm(LoginFormType.register);
+                                },
+                                onGotoForgot: () {
+                                  _switchForm(LoginFormType.forgotPassword);
+                                },
+                              ),
                             ),
                           ),
                         ),
